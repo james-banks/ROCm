@@ -1,0 +1,100 @@
+parameters:
+- name: checkoutRepo
+  type: string
+  default: 'self'
+- name: checkoutRef
+  type: string
+  default: ''
+- name: aptPackages
+  type: object
+  default:
+    - cmake
+    - python3-pip
+    - ninja-build
+    - pkg-config
+    - libpci-dev
+    - libnuma-dev
+    - libffi-dev
+    - git
+    - libopenmpi-dev
+    - gawk
+    - mesa-common-dev
+    - libtool
+    - libdrm-amdgpu1
+    - libdrm-dev
+    - libdw-dev
+    - libgtest-dev
+    - libsystemd-dev
+    - libssl-dev
+    - libstdc++-12-dev
+- name: rocmDependencies
+  type: object
+  default:
+    - llvm-project
+
+jobs:
+- job: flang_legacy
+  variables:
+  - group: common
+  - template: /.azuredevops/variables-global.yml
+  pool: ${{ variables.MEDIUM_BUILD_POOL }}
+  workspace:
+    clean: all
+  steps:
+  - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/dependencies-other.yml
+    parameters:
+      aptPackages: ${{ parameters.aptPackages }}
+  - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/preamble.yml
+  - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/checkout.yml
+    parameters:
+      checkoutRepo: ${{ parameters.checkoutRepo }}
+# CI case: download latest default branch build
+  - ${{ if eq(parameters.checkoutRef, '') }}:
+    - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/dependencies-rocm.yml
+      parameters:
+        dependencyList: ${{ parameters.rocmDependencies }}
+        dependencySource: staging
+# manual build case: triggered by ROCm/ROCm repo
+  - ${{ if ne(parameters.checkoutRef, '') }}:
+    - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/dependencies-rocm.yml
+      parameters:
+        dependencyList: ${{ parameters.rocmDependencies }}
+        dependencySource: tag-builds
+  - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/build-cmake.yml
+    parameters:
+      componentName: flang-legacy-llvm
+      extraBuildFlags: >-
+        -DLLVM_ENABLE_PROJECTS=clang
+        -DCMAKE_BUILD_TYPE=Release
+        -DLLVM_TARGETS_TO_BUILD=AMDGPU;X86
+        -DCLANG_DEFAULT_LINKER=lld
+        -DLLVM_VERSION_MAJOR=17
+        -DLLVM_INCLUDE_BENCHMARKS=0
+        -DLLVM_INCLUDE_RUNTIMES=0
+        -DLLVM_INCLUDE_EXAMPLES=0
+        -DLLVM_INCLUDE_TESTS=0
+        -DLLVM_INCLUDE_DOCS=0
+        -DLLVM_INCLUDE_UTILS=0
+        -DCLANG_DEFAULT_PIE_ON_LINUX=0
+        -DLLVM_ENABLE_ZSTD=OFF
+        -GNinja
+      cmakeBuildDir: $(Build.SourcesDirectory)/flang-legacy/17.0-4/llvm-legacy/llvm/build
+      installDir: $(Build.SourcesDirectory)/flang-legacy/17.0-4/llvm-legacy
+  - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/build-cmake.yml
+    parameters:
+      componentName: flang-legacy
+      extraBuildFlags: >-
+        -DCMAKE_BUILD_TYPE=Release
+        -DCMAKE_C_COMPILER=$(Agent.BuildDirectory)/rocm/llvm/bin/clang
+        -DCMAKE_CXX_COMPILER=$(Agent.BuildDirectory)/rocm/llvm/bin/clang++
+        -DCMAKE_CXX_STANDARD=17
+        -DBUILD_SHARED_LIBS=OFF
+        -DCMAKE_SKIP_BUILD_RPATH=TRUE
+        -DCMAKE_SKIP_INSTALL_RPATH=TRUE
+        -DCMAKE_SHARED_LINKER_FLAGS_INIT=-Wl,--enable-new-dtags,--build-id=sha1,--rpath,$ORIGIN:$ORIGIN/../lib:$ORIGIN/../../lib:$ORIGIN/../../../lib
+        -DCMAKE_EXE_LINKER_FLAGS_INIT=-Wl,--enable-new-dtags,--build-id=sha1,--rpath,$ORIGIN/../lib:$ORIGIN/../../lib:$ORIGIN/../../../lib
+        -DCMAKE_MODULE_LINKER_FLAGS_INIT=-Wl,--enable-new-dtags,--build-id=sha1,--rpath,$ORIGIN:$ORIGIN/../lib:$ORIGIN/../../lib:$ORIGIN/../../../lib
+        -GNinja
+      cmakeBuildDir: $(Build.SourcesDirectory)/flang-legacy/17.0-4/build
+      installDir: $(Build.BinariesDirectory)/llvm
+  - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/artifact-upload.yml
