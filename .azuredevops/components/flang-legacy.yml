@@ -27,6 +27,7 @@ parameters:
     - libsystemd-dev
     - libssl-dev
     - libstdc++-12-dev
+    - libtinfo-dev
 - name: rocmDependencies
   type: object
   default:
