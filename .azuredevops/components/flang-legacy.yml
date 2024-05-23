@@ -79,8 +79,7 @@ jobs:
         -DLLVM_ENABLE_ZSTD=OFF
         -GNinja
       cmakeBuildDir: $(Build.SourcesDirectory)/flang-legacy/17.0-4/llvm-legacy/llvm/build
-      cmakeInstallStep: false
-      cmakeTargetDir: $(Build.SourcesDirectory)/flang-legacy/17.0-4/llvm-legacy
+      installDir: $(Build.SourcesDirectory)/flang-legacy/17.0-4/llvm-legacy
   - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/build-cmake.yml
     parameters:
       componentName: flang-legacy
@@ -97,5 +96,6 @@ jobs:
         -DCMAKE_MODULE_LINKER_FLAGS_INIT=-Wl,--enable-new-dtags,--build-id=sha1,--rpath,$ORIGIN:$ORIGIN/../lib:$ORIGIN/../../lib:$ORIGIN/../../../lib
         -GNinja
       cmakeBuildDir: $(Build.SourcesDirectory)/flang-legacy/17.0-4/build
+      cmakeTargetDir: $(Build.SourcesDirectory)/flang-legacy/17.0-4
       installDir: $(Build.BinariesDirectory)/llvm
   - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/artifact-upload.yml
