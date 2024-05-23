@@ -79,7 +79,8 @@ jobs:
         -DLLVM_ENABLE_ZSTD=OFF
         -GNinja
       cmakeBuildDir: $(Build.SourcesDirectory)/flang-legacy/17.0-4/llvm-legacy/llvm/build
-      installDir: $(Build.SourcesDirectory)/flang-legacy/17.0-4/llvm-legacy
+      cmakeInstallStep: false
+      cmakeTargetDir: $(Build.SourcesDirectory)/flang-legacy/17.0-4/llvm-legacy
   - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/build-cmake.yml
     parameters:
       componentName: flang-legacy
