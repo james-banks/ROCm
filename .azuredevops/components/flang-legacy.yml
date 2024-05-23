@@ -95,7 +95,6 @@ jobs:
         -DCMAKE_EXE_LINKER_FLAGS_INIT=-Wl,--enable-new-dtags,--build-id=sha1,--rpath,$ORIGIN/../lib:$ORIGIN/../../lib:$ORIGIN/../../../lib
         -DCMAKE_MODULE_LINKER_FLAGS_INIT=-Wl,--enable-new-dtags,--build-id=sha1,--rpath,$ORIGIN:$ORIGIN/../lib:$ORIGIN/../../lib:$ORIGIN/../../../lib
         -GNinja
-      cmakeBuildDir: $(Build.SourcesDirectory)/flang-legacy/17.0-4/build
-      cmakeTargetDir: $(Build.SourcesDirectory)/flang-legacy/17.0-4
+      cmakeBuildDir: $(Build.SourcesDirectory)/flang-legacy/17.0-4
       installDir: $(Build.BinariesDirectory)/llvm
   - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/artifact-upload.yml
