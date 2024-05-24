@@ -65,6 +65,8 @@ jobs:
     parameters:
       componentName: flang-legacy-llvm
       extraBuildFlags: >-
+        -DCMAKE_CXX_COMPILER=$(Agent.BuildDirectory)/rocm/llvm/bin/clang++
+        -DCMAKE_C_COMPILER=$(Agent.BuildDirectory)/rocm/llvm/bin/clang
         -DLLVM_ENABLE_PROJECTS=clang
         -DCMAKE_BUILD_TYPE=Release
         -DLLVM_TARGETS_TO_BUILD=AMDGPU;X86
