@@ -19,7 +19,7 @@ parameters:
     - libavformat-dev
     - libavutil-dev
     - libswscale-dev
-    - libjpeg-dev
+    - libjpeg-turbo
     - rapidjson-dev
     - libopencv-dev
 - name: pipModules
