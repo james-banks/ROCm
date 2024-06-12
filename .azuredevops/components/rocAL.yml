@@ -9,9 +9,12 @@ parameters:
   type: object
   default:
     - python3-pip
+    - python3-protobuf
     - cmake
     - ninja-build
     - libprotobuf-dev
+    - libprotoc-dev
+    - protobuf-compiler
     - liblmdb-dev
     - pkg-config
     - ffmpeg
