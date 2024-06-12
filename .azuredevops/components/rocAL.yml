@@ -13,6 +13,15 @@ parameters:
     - ninja-build
     - libprotobuf-dev
     - liblmdb-dev
+    - pkg-config
+    - ffmpeg
+    - libavcodec-dev
+    - libavformat-dev
+    - libavutil-dev
+    - libswscale-dev
+    - libjpeg-dev
+    - rapidjson-dev
+    - libopencv-dev
 - name: pipModules
   type: object
   default:
