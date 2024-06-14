@@ -16,9 +16,18 @@ parameters:
   default:
     - AMDMIGraphX
     - clr
+    - hipBLAS
+    - hipCUB
+    - hipSOLVER
     - llvm-project
+    - rocBLAS
+    - rocPRIM
     - rocprofiler-register
     - ROCR-Runtime
+    - rocRAND
+    - rocSOLVER
+    - rocSPARSE
+    - rocThrust
 
 jobs:
 - job: rocm_examples
