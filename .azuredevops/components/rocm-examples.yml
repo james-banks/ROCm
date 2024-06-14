@@ -5,17 +5,18 @@ parameters:
 - name: checkoutRef
   type: string
   default: ''
-- name: aptPackages
-  type: object
-  default:
-- name: pipModules
-  type: object
-  default:
+# - name: aptPackages
+#   type: object
+#   default:
+# - name: pipModules
+#   type: object
+#   default:
 - name: rocmDependencies
   type: object
   default:
     - AMDMIGraphX
     - clr
+    - llvm-project
     - rocprofiler-register
     - ROCR-Runtime
 
@@ -49,4 +50,6 @@ jobs:
     parameters:
       extraBuildFlags: >-
         -DCMAKE_PREFIX_PATH=$(Agent.BuildDirectory)/rocm
+        -DCMAKE_CXX_COMPILER=$(Agent.BuildDirectory)/rocm/bin/amdclang++
+        -DCMAKE_C_COMPILER=$(Agent.BuildDirectory)/rocm/bin/amdclang
   - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/artifact-upload.yml
