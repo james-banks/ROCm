@@ -5,6 +5,19 @@ parameters:
 - name: checkoutRef
   type: string
   default: ''
+- name: aptPackages
+  type: object
+  default:
+- name: pipModules
+  type: object
+  default:
+- name: rocmDependencies
+  type: object
+  default:
+    - AMDMIGraphX
+    - clr
+    - rocprofiler-register
+    - ROCR-Runtime
 
 jobs:
 - job: rocm_examples
@@ -20,5 +33,20 @@ jobs:
   - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/checkout.yml
     parameters:
       checkoutRepo: ${{ parameters.checkoutRepo }}
+  # CI case: download latest default branch build
+  - ${{ if eq(parameters.checkoutRef, 'develop') }}:
+    - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/dependencies-rocm.yml
+      parameters:
+        dependencyList: ${{ parameters.rocmDependencies }}
+        dependencySource: staging
+  # manual build case: triggered by ROCm/ROCm repo
+  - ${{ if ne(parameters.checkoutRef, 'develop') }}:
+    - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/dependencies-rocm.yml
+      parameters:
+        dependencyList: ${{ parameters.rocmDependencies }}
+        dependencySource: tag-builds
   - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/build-cmake.yml
+    parameters:
+      extraBuildFlags: >-
+        -DCMAKE_PREFIX_PATH=$(Agent.BuildDirectory)/rocm
   - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/artifact-upload.yml
