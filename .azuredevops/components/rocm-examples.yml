@@ -18,7 +18,9 @@ parameters:
     - clr
     - hipBLAS
     - hipCUB
+    - hipRAND
     - hipSOLVER
+    - hipSPARSE
     - llvm-project
     - rocBLAS
     - rocPRIM
