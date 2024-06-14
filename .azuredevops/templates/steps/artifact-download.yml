@@ -21,6 +21,7 @@ parameters:
     half: master
     HIP: develop
     hipBLAS: develop
+    hipCUB: develop
     hipRAND: develop
     hipSPARSE: develop
     llvm-project: amd-staging
