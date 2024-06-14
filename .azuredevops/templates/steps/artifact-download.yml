@@ -23,6 +23,7 @@ parameters:
     hipBLAS: develop
     hipCUB: develop
     hipRAND: develop
+    hipSOLVER: develop
     hipSPARSE: develop
     llvm-project: amd-staging
     MIOpen: develop
