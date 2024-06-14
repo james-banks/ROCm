@@ -8,7 +8,7 @@ parameters:
 - name: aptPackages
   type: object
   default:
-    - libglfw-dev
+    - libglfw3-dev
 # - name: pipModules
 #   type: object
 #   default:
