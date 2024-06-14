@@ -5,9 +5,10 @@ parameters:
 - name: checkoutRef
   type: string
   default: ''
-# - name: aptPackages
-#   type: object
-#   default:
+- name: aptPackages
+  type: object
+  default:
+    - libglfw-dev
 # - name: pipModules
 #   type: object
 #   default:
@@ -18,6 +19,7 @@ parameters:
     - clr
     - hipBLAS
     - hipCUB
+    - HIPIFY
     - hipRAND
     - hipSOLVER
     - hipSPARSE
@@ -45,6 +47,9 @@ jobs:
   - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/checkout.yml
     parameters:
       checkoutRepo: ${{ parameters.checkoutRepo }}
+  - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/dependencies-other.yml
+    parameters:
+      aptPackages: ${{ parameters.aptPackages }}
   # CI case: download latest default branch build
   - ${{ if eq(parameters.checkoutRef, 'develop') }}:
     - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/dependencies-rocm.yml
@@ -62,5 +67,4 @@ jobs:
       extraBuildFlags: >-
         -DCMAKE_PREFIX_PATH=$(Agent.BuildDirectory)/rocm
         -DCMAKE_CXX_COMPILER=$(Agent.BuildDirectory)/rocm/llvm/bin/amdclang++
-        -DCMAKE_C_COMPILER=$(Agent.BuildDirectory)/rocm/llvm/bin/amdclang
   - template: ${{ variables.CI_TEMPLATE_PATH }}/steps/artifact-upload.yml
